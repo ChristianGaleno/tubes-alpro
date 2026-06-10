@@ -20,6 +20,7 @@ func main() {
 		fmt.Println("3. Vote (Input Suara)")
 		fmt.Println("4. Lihat Statistik")
 		fmt.Println("5. Cari Kandidat")
+		fmt.Println("6. Hapus Kandidat")
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilih: ")
 		fmt.Scan(&pilihan)
@@ -38,8 +39,34 @@ func main() {
 			lihatStatistik()
 		} else if pilihan == 5 {
 			CariKandidat()
+		}else if pilihan == 6 {
+			hapusKandidat()
 		}
 	}
+}
+
+func hapusKandidat(){
+	var kandidat int
+	var removed bool
+	var i int
+	fmt.Println("Kandidat yang ingin dihapus: ")
+	fmt.Scan(&kandidat)
+	removed = true
+
+	for i < totalKandidat && removed {
+		if dataKandidat[i].NoUrut == kandidat{
+			for j:=i;j<totalKandidat;j++{
+				dataKandidat[j] = dataKandidat[j+1]
+				dataKandidat[j].NoUrut -= 1
+			}
+			removed = false
+			totalKandidat -= 1
+		}
+		i++
+	}
+
+	fmt.Printf("Data Kandidat: %d Berhasil dihapus", kandidat)
+
 }
 
 func CariKandidat() {
@@ -177,8 +204,16 @@ func inputSuara() {
 }
 
 func lihatStatistik() {
+	var totalSuara int
+	
+	for i := 0; i < totalKandidat; i++ {
+		totalSuara += dataKandidat[i].Suara
+	} 
+
 	fmt.Println("--- Statistik Perolehan Suara ---")
 	for i := 0; i < totalKandidat; i++ {
-		fmt.Printf("%s: %d suara\n", dataKandidat[i].Nama, dataKandidat[i].Suara)
+		var persentase float64
+		persentase = float64(dataKandidat[i].Suara) / float64(totalSuara) * 100
+		fmt.Printf("%s: %d suara | persentase: %.2f \n", dataKandidat[i].Nama, dataKandidat[i].Suara, persentase)
 	}
 }
