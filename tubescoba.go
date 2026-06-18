@@ -80,9 +80,7 @@ func CariKandidat() {
 
 	fmt.Print("Masukkan nomor urut kandidat yang ingin dicari: ")
 	fmt.Scan(&noUrut)
-
-	// Salin data lalu urutkan ascending berdasarkan NoUrut supaya
-	// binary search tetap benar walau menu sebelumnya mengurutkan descending.
+	
 	var data [100]Kandidat
 	for i := 0; i < totalKandidat; i++ {
 		data[i] = dataKandidat[i]
