@@ -55,7 +55,7 @@ func hapusKandidat(){
 
 	for i < totalKandidat && removed {
 		if dataKandidat[i].NoUrut == kandidat{
-			for j:=i;j<totalKandidat;j++{
+			for j:=i;j<totalKandidat-1;j++{
 				dataKandidat[j] = dataKandidat[j+1]
 				dataKandidat[j].NoUrut -= 1
 			}
@@ -80,19 +80,37 @@ func CariKandidat() {
 
 	fmt.Print("Masukkan nomor urut kandidat yang ingin dicari: ")
 	fmt.Scan(&noUrut)
-	mid = totalKandidat / 2
+
+	// Salin data lalu urutkan ascending berdasarkan NoUrut supaya
+	// binary search tetap benar walau menu sebelumnya mengurutkan descending.
+	var data [100]Kandidat
+	for i := 0; i < totalKandidat; i++ {
+		data[i] = dataKandidat[i]
+	}
+	for i := 0; i < totalKandidat-1; i++ {
+		idxMin := i
+		for j := i + 1; j < totalKandidat; j++ {
+			if data[j].NoUrut < data[idxMin].NoUrut {
+				idxMin = j
+			}
+		}
+		if idxMin != i {
+			data[i], data[idxMin] = data[idxMin], data[i]
+		}
+	}
+
 	low = 0
 	high = totalKandidat - 1
 
 	for low <= high {
 		mid = (low + high) / 2
-		if dataKandidat[mid].NoUrut == noUrut {
+		if data[mid].NoUrut == noUrut {
 			fmt.Printf("Kandidat ditemukan: No Urut: %d | Nama: %s | Suara: %d\n",
-				dataKandidat[mid].NoUrut,
-				dataKandidat[mid].Nama,
-				dataKandidat[mid].Suara)
+				data[mid].NoUrut,
+				data[mid].Nama,
+				data[mid].Suara)
 			return
-		} else if dataKandidat[mid].NoUrut < noUrut {
+		} else if data[mid].NoUrut < noUrut {
 			low = mid + 1
 		} else {
 			high = mid - 1
@@ -213,7 +231,9 @@ func lihatStatistik() {
 	fmt.Println("--- Statistik Perolehan Suara ---")
 	for i := 0; i < totalKandidat; i++ {
 		var persentase float64
-		persentase = float64(dataKandidat[i].Suara) / float64(totalSuara) * 100
+		if totalSuara > 0 {
+			persentase = float64(dataKandidat[i].Suara) / float64(totalSuara) * 100
+		}
 		fmt.Printf("%s: %d suara | persentase: %.2f \n", dataKandidat[i].Nama, dataKandidat[i].Suara, persentase)
 	}
 }
